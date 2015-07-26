@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ColorPrimary">#2196f3</color>
+    <color name="ColorPrimaryDark">#1976d2</color>
+    <color name="SelectedToolbar">#ff828282</color>
+    <color name="SelectedOverlay">#32000000</color>
+    <color name="TabStripText">#feff</color>
+    <color name="statusGreen">#43a047</color>
+    <color name="statusOrange">#ff9800</color>
+    <color name="statusYellow">#fdd835</color>
+    <color name="statusComplete">#ff22fda4</color>
+</resources>

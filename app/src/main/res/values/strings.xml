@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">SibriverTest</string>
+
+    <string name="action_settings">Настройки</string>
+    <string name="list">Список</string>
+    <string name="map">Карта</string>
+    <string name="nameTv">name</string>
+    <string name="addressTv">address</string>
+    <string name="createdTv">dateOfCreation</string>
+    <string name="statusTv">Status</string>
+
+    <string-array name="items">
+        <item>@string/allOrders</item>
+        <item>@string/inProgress</item>
+        <item>@string/withQuestion</item>
+        <item>@string/cancelled</item>
+        <item>@string/archive</item>
+    </string-array>
+
+    <string name="newItem">Новая</string>
+
+    <string name="url">https://api.myjson.com/bins/10fda</string>
+
+
+    <string name="emptyData">There is no any data in Database</string>
+    <string name="notFound">Error 404. Request Page Not Found</string>
+    <string name="badRequest">Error 400. Bad Request</string>
+    <string name="serverError">Error 500. Server Error</string>
+
+    <string name="complete">Законченные</string>
+    <string name="allOrders">Все заказы</string>
+    <string name="inProgress">В работе</string>
+    <string name="withQuestion">Вопрос</string>
+    <string name="cancelled">Отмененные</string>
+    <string name="archive">Архив</string>
+</resources>
