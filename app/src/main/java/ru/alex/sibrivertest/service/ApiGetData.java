@@ -63,7 +63,6 @@ public class ApiGetData extends AsyncTask<String, Void, String> {
     protected String doInBackground(String... params) {
         String resultJson;
         try{
-            /*resultJson = getJsonFromUri("https://api.myjson.com/bins/10fda");*/
             resultJson = getJsonFromUri(context.getResources().getString(R.string.url));
         } catch (IOException io){
             resultJson = io.getMessage();
