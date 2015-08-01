@@ -6,10 +6,12 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.BufferedReader;
@@ -63,7 +65,8 @@ public class ApiGetData extends AsyncTask<String, Void, String> {
     protected String doInBackground(String... params) {
         String resultJson;
         try{
-            resultJson = getJsonFromUri(context.getResources().getString(R.string.url));
+            /*resultJson = getJsonFromUri(context.getResources().getString(R.string.url));*/
+            resultJson = getJsonFromUri("https://api.myjson.com/bins/10fda");
         } catch (IOException io){
             resultJson = io.getMessage();
         }
@@ -72,6 +75,7 @@ public class ApiGetData extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String resultJson) {
+        super.onPostExecute(resultJson);
         if(isNetworkAvailable()) {
             if (connectionRequest == 200) {
                 writeData();
@@ -108,24 +112,24 @@ public class ApiGetData extends AsyncTask<String, Void, String> {
             }
         }
         progressDialog.dismiss();
-        super.onPostExecute(resultJson);
     }
 
 
     private String getJsonFromUri(String uri) throws IOException {
         URL url = new URL(uri);
         urlConnection = (HttpURLConnection) url.openConnection();
-        connectionRequest = urlConnection.getResponseCode();
         urlConnection.setRequestMethod("GET");
-        urlConnection.connect();
-        InputStream inputStream = urlConnection.getInputStream();
-        StringBuffer buffer = new StringBuffer();
-        reader = new BufferedReader(new InputStreamReader(inputStream));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            buffer.append(line);
+        connectionRequest = urlConnection.getResponseCode();
+        if(connectionRequest == HttpURLConnection.HTTP_OK){
+            BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+            while((inputLine = reader.readLine()) != null){
+                response.append(inputLine);
+            }
+            resultJsonString = response.toString();
+            reader.close();
         }
-        resultJsonString = buffer.toString();
         return resultJsonString;
     }
 
@@ -139,23 +143,25 @@ public class ApiGetData extends AsyncTask<String, Void, String> {
     }
 
     public void writeData(){
-        jsonArrayModel = new GsonBuilder().create().fromJson(resultJsonString, JsonArrayModel.class);
-        responseArrayModels = jsonArrayModel.getResponseArrayModels();
-        try {
-            ItemModelDAO itemModelDAO = HelperFactory.getDatabaseHelper().getItemModelDAO();
-            itemModelDAO.deleteAll();
-            for (ResponseArrayModel arrayModel : responseArrayModels){
-                itemModel.setRid(arrayModel.getId());
-                itemModel.setName(arrayModel.getName());
-                itemModel.setStatus(arrayModel.getStatus());
-                itemModel.setAddress(arrayModel.getAddress());
-                itemModel.setLat(arrayModel.getLat());
-                itemModel.setLon(arrayModel.getLon());
-                itemModel.setCreated(arrayModel.getCreated());
-                itemModelDAO.addData(itemModel);
+        if(null != resultJsonString && !resultJsonString.isEmpty()) {
+            jsonArrayModel = new Gson().fromJson(resultJsonString, JsonArrayModel.class);
+            responseArrayModels = jsonArrayModel.getResponseArrayModels();
+            try {
+                ItemModelDAO itemModelDAO = HelperFactory.getDatabaseHelper().getItemModelDAO();
+                itemModelDAO.deleteAll();
+                for (ResponseArrayModel arrayModel : responseArrayModels) {
+                    itemModel.setRid(arrayModel.getId());
+                    itemModel.setName(arrayModel.getName());
+                    itemModel.setStatus(arrayModel.getStatus());
+                    itemModel.setAddress(arrayModel.getAddress());
+                    itemModel.setLat(arrayModel.getLat());
+                    itemModel.setLon(arrayModel.getLon());
+                    itemModel.setCreated(arrayModel.getCreated());
+                    itemModelDAO.addData(itemModel);
+                }
+            } catch (SQLException | NullPointerException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 
